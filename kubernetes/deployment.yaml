@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name:  notification
+  namespace: dn
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: notification
+  template:
+    metadata:
+      labels:
+        app: notification
+    spec:
+      # Use the Kubernetes Service Account (KSA)with Workload Identity
+      serviceAccountName: ksa  # Ensure this matches your KSA name
+      containers:
+        # Spring Boot application container
+        - name: order-service-project
+          image: asia-south1-docker.pkg.dev/multi-micro-project/mutli-micro-repo/order-service-project:tag_version
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8082
+          env:
+            - name: DB_HOST
+              value: "127.0.0.1"  # Cloud SQL Proxy will listen on localhost
+            - name: DB_PORT
+              value: "3306"  # MySQL default port
+            - name: INSTANCE_CONNECTION_NAME
+              value: multi-micro-project:us-central1:multi-micro-db
+            - name: DB_NAME
+              value: "product-data" # Your database name in Cloud SQL
+            - name: DB_USER
+              value: "ravi"  #Your database user in Cloud SQL
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                 name: secret-db-password
+                 key: secret-db-password-key
+            - name: TWILIO_ACCOUNT_SID
+              valueFrom:
+                secretKeyRef:
+                  name: twilio-secret
+                  key: TWILIO_ACCOUNT_SID
+
+            - name: TWILIO_AUTH_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: twilio-secret
+                  key: TWILIO_AUTH_TOKEN
+
+            - name: TWILIO_PHONE_NUMBER
+              valueFrom:
+                secretKeyRef:
+                  name: twilio-secret
+                  key: TWILIO_PHONE_NUMBER
+
+            - name: USERS_PHONE_NUMBERS
+              valueFrom:
+                secretKeyRef:
+                  name: twilio-secret
+                  key: USERS_PHONE_NUMBERS
