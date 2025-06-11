@@ -6,9 +6,15 @@ import com.twilio.Twilio;
 import com.twilio.rest.api.v2010.account.Message;
 import com.twilio.type.PhoneNumber;
 import jakarta.annotation.PostConstruct;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -16,41 +22,38 @@ import java.util.concurrent.CompletableFuture;
 @Service
 public class NotificationService {
 
-    @Value("${twilio.account_sid}")
-    private String accountSid;
 
-    @Value("${twilio.auth_token}")
-    private String authToken;
+    @Value("${textbelt_api_key}")
+    private String textbelt_api_key;
 
-    @Value("${twilio.phone_number}")  // <-- This is the FROM phone number
-    private String twilioPhoneNumber;
-
-    @Value("${app.sms.indiaNumbers}")  // <-- This is the to phone number
+    @Value("${receivers_group_numbers}")
     private String indiaNumbersCsv;
 
 
-    private List<String> indiaNumbers;
-
-    @PostConstruct
-    public void init() {
-        // Initialize Twilio client once
-        Twilio.init(accountSid, authToken);
-        // Prepare list of recipient numbers
-        indiaNumbers = Arrays.asList(indiaNumbersCsv.split(","));
-    }
-
-    public void sendNotificationToAll(String message) {
+    public void sendNotificationToAll1(String message) throws IOException, InterruptedException {
 
         String notificationMessage=buildNotificationMessage(message);
 
-        indiaNumbers.forEach(to -> {
-                Message.creator(
-                        new PhoneNumber(to.trim()),
-                        new PhoneNumber(twilioPhoneNumber),
-                        notificationMessage
-                ).create();
-                System.out.println("Sent SMS to " + to);
-        });
+        HttpClient client = HttpClient.newHttpClient();
+
+        String[] phoneNumbers=indiaNumbersCsv.split(",");
+
+
+        for (String phone : phoneNumbers) {
+            JSONObject postData = new JSONObject();
+            postData.put("phone", phone.trim());
+            postData.put("message", notificationMessage);
+            postData.put("key",textbelt_api_key); // Replace with your API key if using paid
+
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create("https://textbelt.com/text"))
+                    .header("Content-Type", "application/json")
+                    .POST(HttpRequest.BodyPublishers.ofString(postData.toString()))
+                    .build();
+
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            System.out.println("SMS sent to  " + phone + ": " + response.body());
+        }
     }
 
     public static String buildNotificationMessage(String rawJson) {
@@ -73,4 +76,5 @@ public class NotificationService {
                             %s
                             """, prettyJson);
     }
+
 }

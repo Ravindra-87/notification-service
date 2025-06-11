@@ -7,6 +7,8 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+
 @Slf4j
 @Component
 public class OrdersEventConsumer {
@@ -17,12 +19,12 @@ public class OrdersEventConsumer {
 
 
     @KafkaListener(topics = "order-events-topic", groupId = "notification-group")
-    public void listen(String orderEvent) {
+    public void listen(String orderEvent) throws IOException, InterruptedException {
         System.out.println("Received message: " + orderEvent);
 
-        notificationService.sendNotificationToAll(orderEvent);
+        //notificationService.sendNotificationToAll1(orderEvent);
 
-        log.info("SMS notifications sent successfully");
+        log.info("All SMS notifications sent successfully");
 
     }
 }

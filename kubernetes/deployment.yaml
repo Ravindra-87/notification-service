@@ -38,29 +38,16 @@ spec:
                 secretKeyRef:
                  name: secret-db-password
                  key: secret-db-password-key
-            - name: TWILIO_ACCOUNT_SID
+            - name: TEXTBELT_API_KEY
               valueFrom:
                 secretKeyRef:
                   name: twilio-secret
-                  key: TWILIO_ACCOUNT_SID
-
-            - name: TWILIO_AUTH_TOKEN
+                  key: TEXTBELT_API_KEY
+            - name: RECEIVERS_GROUP_NUMBERS
               valueFrom:
                 secretKeyRef:
                   name: twilio-secret
-                  key: TWILIO_AUTH_TOKEN
-
-            - name: TWILIO_PHONE_NUMBER
-              valueFrom:
-                secretKeyRef:
-                  name: twilio-secret
-                  key: TWILIO_PHONE_NUMBER
-
-            - name: USERS_PHONE_NUMBERS
-              valueFrom:
-                secretKeyRef:
-                  name: twilio-secret
-                  key: USERS_PHONE_NUMBERS
+                  key: RECEIVERS_GROUP_NUMBERS
             - name: KAFKA_AUTO_CREATE_TOPICS_ENABLE
               value: "true"  # enables auto topic creation on message publish
 
