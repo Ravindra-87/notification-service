@@ -21,7 +21,7 @@ public class OrdersEventConsumer {
         System.out.println("Received message: " + orderEvent);
 
         String smsMessage = String.format("📦 Order Notification\n---------\nBelow Order has been placed successfully!\n" +orderEvent);
-        notificationService.sendNotificationToAll(orderEvent);
+        notificationService.sendNotificationToAll(smsMessage);
 
         log.info("SMS notifications sent successfully");
 
