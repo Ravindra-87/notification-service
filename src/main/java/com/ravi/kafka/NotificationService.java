@@ -44,14 +44,12 @@ public class NotificationService {
         String notificationMessage=buildNotificationMessage(message);
 
         indiaNumbers.forEach(to -> {
-            CompletableFuture.runAsync(() -> {
                 Message.creator(
                         new PhoneNumber(to.trim()),
                         new PhoneNumber(twilioPhoneNumber),
                         notificationMessage
                 ).create();
                 System.out.println("Sent SMS to " + to);
-            });
         });
     }
 
