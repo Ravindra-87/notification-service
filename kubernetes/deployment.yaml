@@ -61,3 +61,8 @@ spec:
                 secretKeyRef:
                   name: twilio-secret
                   key: USERS_PHONE_NUMBERS
+            - name: KAFKA_AUTO_CREATE_TOPICS_ENABLE
+              value: "true"  # enables auto topic creation on message publish
+
+            - name: KAFKA_NUM_PARTITIONS
+              value: "3"  # default partitions for newly auto-created topics
