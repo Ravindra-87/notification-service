@@ -59,7 +59,7 @@ public class NotificationService {
     }
 
     public static String buildNotificationMessage(String rawJson) {
-        String prettyJson;
+        String compactJson;
         try {
             ObjectMapper mapper = new ObjectMapper();
             Map<String, Object> jsonMap = mapper.readValue(rawJson, new TypeReference<Map<String, Object>>() {});
@@ -70,19 +70,18 @@ public class NotificationService {
             jsonMap.remove("orderDate");
             jsonMap.remove("orderStatus");// Example: Remove price if needed
 
-            ObjectWriter writer = mapper.writerWithDefaultPrettyPrinter();
-            prettyJson = writer.writeValueAsString(jsonMap);
+
+            // Compact (non-pretty) JSON
+            ObjectWriter writer = mapper.writer();
+            compactJson = writer.writeValueAsString(jsonMap);
+
+
         } catch (Exception e) {
-            prettyJson = rawJson; // fallback to raw JSON if parsing fails
+            compactJson = rawJson; // fallback to raw JSON if parsing fails
         }
 
-        return String.format("""
-                            📦 *Order Notification*
-                            ------------------------
-                            ✅ Your order has been placed successfully!
-                            🧾 *Order Details:*
-                            %s
-                            """, prettyJson);
+         return "Order placed. Details: " + compactJson;
+
     }
 
 }
