@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 public class NotificationService {
@@ -35,17 +36,21 @@ public class NotificationService {
         // Prepare list of recipient numbers
         indiaNumbers = Arrays.asList(indiaNumbersCsv.split(","));
     }
+
     public void sendNotificationToAll(String message) {
-
         indiaNumbers.forEach(to -> {
-            Message.creator(
-                    new PhoneNumber(to.trim()),             // TO number
-                    new PhoneNumber(twilioPhoneNumber),     // FROM number
-                    message
-            ).create();
-
-            System.out.println("Sent SMS to " + to);
-         });
-
+            CompletableFuture.runAsync(() -> {
+                Message.creator(
+                        new PhoneNumber(to.trim()),
+                        new PhoneNumber(twilioPhoneNumber),
+                        message
+                ).create();
+                System.out.println("Sent SMS to " + to);
+            });
+        });
     }
+
+
+
+
 }
