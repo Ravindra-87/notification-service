@@ -18,7 +18,7 @@ spec:
       containers:
         # Spring Boot application container
         - name: order-service-project
-          image: asia-south1-docker.pkg.dev/multi-micro-project/mutli-micro-repo/order-service-project:tag_version
+          image: asia-south1-docker.pkg.dev/multi-micro-project/mutli-micro-repo/notification-service-project:tag_version
           imagePullPolicy: Always
           ports:
             - containerPort: 8082
