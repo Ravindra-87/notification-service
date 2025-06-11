@@ -1,5 +1,6 @@
 package com.ravi.kafka;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.twilio.Twilio;
@@ -17,6 +18,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 @Service
@@ -60,9 +62,16 @@ public class NotificationService {
         String prettyJson;
         try {
             ObjectMapper mapper = new ObjectMapper();
+            Map<String, Object> jsonMap = mapper.readValue(rawJson, new TypeReference<Map<String, Object>>() {});
+
+            // Remove keys you don't want in the final message
+            jsonMap.remove("productId");
+            jsonMap.remove("productPrice");
+            jsonMap.remove("orderDate");
+            jsonMap.remove("orderStatus");// Example: Remove price if needed
+
             ObjectWriter writer = mapper.writerWithDefaultPrettyPrinter();
-            Object jsonObj = mapper.readValue(rawJson, Object.class);
-            prettyJson = writer.writeValueAsString(jsonObj);
+            prettyJson = writer.writeValueAsString(jsonMap);
         } catch (Exception e) {
             prettyJson = rawJson; // fallback to raw JSON if parsing fails
         }
@@ -71,7 +80,6 @@ public class NotificationService {
                             📦 *Order Notification*
                             ------------------------
                             ✅ Your order has been placed successfully!
-                    
                             🧾 *Order Details:*
                             %s
                             """, prettyJson);
