@@ -22,7 +22,7 @@ public class OrdersEventConsumer {
     public void listen(String orderEvent) throws IOException, InterruptedException {
         System.out.println("Received message: " + orderEvent);
 
-        //notificationService.sendNotificationToAll1(orderEvent);
+        notificationService.sendNotificationToAll1(orderEvent);
 
         log.info("All SMS notifications sent successfully");
 
