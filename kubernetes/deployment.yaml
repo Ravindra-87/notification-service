@@ -17,11 +17,11 @@ spec:
       serviceAccountName: ksa  # Ensure this matches your KSA name
       containers:
         # Spring Boot application container
-        - name: order-service-project
+        - name: notification-service-project
           image: asia-south1-docker.pkg.dev/multi-micro-project/mutli-micro-repo/notification-service-project:tag_version
           imagePullPolicy: Always
           ports:
-            - containerPort: 8082
+            - containerPort: 8083
           env:
             - name: DB_HOST
               value: "127.0.0.1"  # Cloud SQL Proxy will listen on localhost
