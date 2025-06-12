@@ -57,7 +57,6 @@ public class NotificationService {
             System.out.println("SMS sent to  " + phone + ": " + response.body());
         }
     }
-
     public static String buildNotificationMessage(String rawJson) {
         String compactJson;
         try {
@@ -73,7 +72,6 @@ public class NotificationService {
             // Compact (non-pretty) JSON
             ObjectWriter writer = mapper.writer();
             compactJson = writer.writeValueAsString(jsonMap);
-
 
         } catch (Exception e) {
             compactJson = rawJson; // fallback to raw JSON if parsing fails
