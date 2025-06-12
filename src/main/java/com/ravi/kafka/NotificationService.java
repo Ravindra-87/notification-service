@@ -70,7 +70,6 @@ public class NotificationService {
             jsonMap.remove("orderDate");
             jsonMap.remove("orderStatus");// Example: Remove price if needed
 
-
             // Compact (non-pretty) JSON
             ObjectWriter writer = mapper.writer();
             compactJson = writer.writeValueAsString(jsonMap);
